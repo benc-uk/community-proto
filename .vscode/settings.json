@@ -1,0 +1,8 @@
+{
+  "csharp.referencesCodeLens.enabled": false,
+  "[csharp]": {
+    "editor.defaultFormatter": "ms-dotnettools.csharp",
+    "editor.tabSize": 4,
+    "editor.formatOnSave": true
+  }
+}
