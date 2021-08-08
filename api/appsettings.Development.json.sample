@@ -9,9 +9,6 @@
   "AllowedHosts": "*",
   "CosmosDb": {
     "Account": "https://__CHANGE_ME__.documents.azure.com:443/",
-    "Key": "__CHANGE_ME__",
-    "DatabaseName": "commApiDb",
-    "CommunityContainerName": "communities",
-    "UserContainerName": "users"
+    "Key": "__CHANGE_ME__"
   }
 }

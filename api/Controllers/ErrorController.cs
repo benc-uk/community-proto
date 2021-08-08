@@ -15,7 +15,7 @@ namespace CommunityApi.Controlers
         }
 
         [Route("/error")]
-        public IActionResult Error()
+        protected IActionResult Error()
         {
             var context = HttpContext.Features.Get<IExceptionHandlerFeature>();
             return Problem(

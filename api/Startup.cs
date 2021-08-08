@@ -68,7 +68,13 @@ namespace CommunityApi
             app.UseRouting();
 
             app.UseAuthorization();
+
+            // Useful when testing
             app.UseCors(builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+
+            // To serve the static JS frontend SPA
+            app.UseDefaultFiles();
+            app.UseStaticFiles();
 
             app.UseEndpoints(endpoints =>
             {

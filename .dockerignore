@@ -1,0 +1,8 @@
+**/node_modules/*
+.dockerignore
+.git
+.gitignore
+**/bin/*
+**/obj/*
+**/wwwroot/*
+**/appsettings.Development.json

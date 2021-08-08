@@ -2,23 +2,25 @@
   <div class="is-flex is-flex-wrap-wrap">
     <div v-if="error" class="notification is-danger">{{ error }}</div>
 
-    <div class="card" v-for="(comm, index) of communities" :key="index">
+    <progress v-if="!communities && !error" class="progress is-large is-info" max="100">60%</progress>
+
+    <div class="card" v-for="(community, index) of communities" :key="index">
       <div class="card-image">
         <figure class="image is-4by3">
-          <img :src="comm.image" alt="Community image" />
+          <img :src="community.image" alt="Community image" />
         </figure>
       </div>
 
       <div class="card-content">
         <div class="media">
           <div class="media-content">
-            <p class="title is-4">{{ comm.name }}</p>
-            <p class="subtitle is-6">{{ comm.members.length }} members</p>
+            <p class="title is-4">{{ community.name }}</p>
+            <p class="subtitle is-6">{{ community.members.length }} members</p>
           </div>
         </div>
 
         <div class="content">
-          {{ comm.description }}
+          {{ community.description }}
         </div>
       </div>
     </div>
@@ -62,5 +64,8 @@ export default {
 }
 .notification {
   margin: 1rem;
+}
+.progress {
+  margin: 3rem;
 }
 </style>
