@@ -38,6 +38,8 @@ WORKDIR /app
 
 # Copy already published binaries (from build stage image)
 COPY --from=server-build /build/bin/Release/net5.0/publish/ .
+# Copy SPA bundle to wwwroot for static serving
+COPY --from=spa-build /build/dist ./wwwroot
 
 # Expose port 5000 from Kestrel webserver
 EXPOSE 5000

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using CommunityApi.Models;
@@ -93,6 +92,14 @@ namespace CommunityApi.Controlers
             await _cosmosDbService.UpdateCommunityAsync(communityId, community);
 
             return Ok();
+        }
+
+        [HttpGet("{id}/discussions")]
+        public async Task<ActionResult<IEnumerable<Discussion>>> GetDiscussions([FromRoute] string id)
+        {
+            // Query returns all discussions under this community
+            List<Discussion> discussions = await _cosmosDbService.GetDiscussionsAsync("c.community", id);
+            return discussions;
         }
     }
 }

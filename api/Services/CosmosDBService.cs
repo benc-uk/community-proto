@@ -12,13 +12,15 @@ namespace CommunityApi.Services
     {
         private Container _userContainer;
         private Container _commContainer;
+        private Container _discussionContainer;
         private readonly ILogger _logger;
 
-        public CosmosDbService(CosmosClient dbClient, string databaseName, string commContainerName, string userContainerName, ILogger<ICosmosDbService> logger)
+        public CosmosDbService(CosmosClient dbClient, string databaseName, string commContainerName, string userContainerName, string discussionContainerName, ILogger<ICosmosDbService> logger)
         {
             this._logger = logger;
             this._commContainer = dbClient.GetContainer(databaseName, commContainerName);
             this._userContainer = dbClient.GetContainer(databaseName, userContainerName);
+            this._discussionContainer = dbClient.GetContainer(databaseName, discussionContainerName);
         }
 
         // ============================
@@ -129,6 +131,61 @@ namespace CommunityApi.Services
         {
             ItemResponse<Community> resp = await this._commContainer.UpsertItemAsync<Community>(comm, new PartitionKey(id));
             return comm;
+        }
+
+        // ============================
+        // Discussion CRUD
+        // ============================
+        public async Task AddDiscussionAsync(Discussion discussion)
+        {
+            await this._discussionContainer.CreateItemAsync<Discussion>(discussion, new PartitionKey(discussion.id));
+        }
+
+        public async Task<List<Discussion>> GetDiscussionsAsync(string field, string contains)
+        {
+            // Embed string in field name ergh hate this, but CosmosDB can' parametrize field names
+            QueryDefinition query = new QueryDefinition($"SELECT * FROM c WHERE contains(lower({field}), @contains) ORDER BY c.created DESC").WithParameter("@contains", contains.ToLower());
+            var iterator = this._discussionContainer.GetItemQueryIterator<Discussion>(query);
+            List<Discussion> results = new List<Discussion>();
+            while (iterator.HasMoreResults)
+            {
+                var response = await iterator.ReadNextAsync();
+                results.AddRange(response.ToList());
+            }
+
+            return results;
+        }
+
+        public async Task<Discussion> GetDiscussionAsync(string id)
+        {
+            try
+            {
+                ItemResponse<Discussion> resp = await this._discussionContainer.ReadItemAsync<Discussion>(id, new PartitionKey(id));
+                return resp.Resource;
+            }
+            catch (CosmosException ex) when (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                return null;
+            }
+        }
+
+        public async Task<System.Net.HttpStatusCode> DeleteDiscussionAsync(string id)
+        {
+            try
+            {
+                ItemResponse<Discussion> resp = await this._discussionContainer.DeleteItemAsync<Discussion>(id, new PartitionKey(id));
+                return System.Net.HttpStatusCode.NoContent;
+            }
+            catch (CosmosException ex)
+            {
+                return ex.StatusCode;
+            }
+        }
+
+        public async Task<Discussion> UpdateDiscussionAsync(string id, Discussion discussion)
+        {
+            ItemResponse<Discussion> resp = await this._discussionContainer.UpsertItemAsync<Discussion>(discussion, new PartitionKey(id));
+            return discussion;
         }
     }
 }

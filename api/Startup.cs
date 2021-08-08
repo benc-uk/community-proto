@@ -26,13 +26,22 @@ namespace CommunityApi
             string databaseName = configurationSection.GetSection("DatabaseName").Value;
             string commContainerName = configurationSection.GetSection("CommunityContainerName").Value;
             string userContainerName = configurationSection.GetSection("UserContainerName").Value;
+            string discussionContainerName = configurationSection.GetSection("DiscussionContainerName").Value;
             string account = configurationSection.GetSection("Account").Value;
             string key = configurationSection.GetSection("Key").Value;
-            CosmosClient client = new CosmosClient(account, key);
-            CosmosDbService cosmosDbService = new CosmosDbService(client, databaseName, commContainerName, userContainerName, logger);
+            CosmosClientOptions clientOptions = new CosmosClientOptions()
+            {
+                // SerializerOptions = new CosmosSerializationOptions()
+                // {
+                //     IgnoreNullValues = true
+                // }
+            };
+            CosmosClient client = new CosmosClient(account, key, clientOptions);
+            CosmosDbService cosmosDbService = new CosmosDbService(client, databaseName, commContainerName, userContainerName, discussionContainerName, logger);
             DatabaseResponse database = await client.CreateDatabaseIfNotExistsAsync(databaseName);
             await database.Database.CreateContainerIfNotExistsAsync(commContainerName, "/id");
             await database.Database.CreateContainerIfNotExistsAsync(userContainerName, "/id");
+            await database.Database.CreateContainerIfNotExistsAsync(discussionContainerName, "/id");
             //await database.Database.DefineContainer(userContainerName, "/id").WithUniqueKey().Path("/uid").Attach().CreateIfNotExistsAsync();
 
             return cosmosDbService;

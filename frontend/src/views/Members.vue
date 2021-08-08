@@ -2,7 +2,7 @@
   <div class="is-flex is-flex-wrap-wrap">
     <div v-if="error" class="notification is-danger">{{ error }}</div>
 
-    <progress v-if="!members && !error" class="progress is-large is-info" max="100">60%</progress>
+    <progress v-if="!members && !error" class="progress is-large is-info" max="100">-</progress>
 
     <div class="card" v-for="(member, index) of members" :key="index">
       <div class="card-content">

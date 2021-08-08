@@ -10,6 +10,23 @@ export default {
       return apiCall('/communities')
     },
 
+    apiGetCommunity: function (id) {
+      return apiCall(`/communities/${id}`)
+    },
+
+    apiGetCommunityDiscussions: function (id) {
+      return apiCall(`/communities/${id}/discussions`)
+    },
+
+    apiNewDiscussion: function (title, body, icon, communityId) {
+      return apiCall(`/discussions`, 'post', {
+        title,
+        body,
+        icon,
+        community: communityId,
+      })
+    },
+
     apiGetAllMembers: function () {
       return apiCall('/users')
     },
@@ -33,6 +50,7 @@ async function apiCall(apiPath, method = 'get', data = null) {
   // Add payload if required
   if (data) {
     request.body = JSON.stringify(data)
+    request.headers['Content-Type'] = 'application/json'
   }
 
   // Make the HTTP request
