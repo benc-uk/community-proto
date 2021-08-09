@@ -1,8 +1,11 @@
 /* istanbul ignore file */
+import auth from '../services/auth'
 
 //
 // Mixin added to components, all API logic here
 //
+
+const apiScope = 'Communities.ReadWrite'
 
 export default {
   methods: {
@@ -40,6 +43,19 @@ async function apiCall(apiPath, method = 'get', data = null) {
   let headers = {}
   const url = `${process.env.VUE_APP_API_ENDPOINT || '/api'}${apiPath}`
   console.log(`### API CALL ${method} ${url}`)
+
+  // Only get a token if logged in and configured
+  if (auth.user() && process.env.VUE_APP_CLIENT_ID && apiScope) {
+    // Try to get an access token with our API scope
+    const accessToken = await auth.acquireToken([`api://${process.env.VUE_APP_CLIENT_ID}/${apiScope}`])
+
+    // Send token as per the OAuth 2.0 bearer token scheme
+    if (accessToken) {
+      headers = {
+        Authorization: `Bearer ${accessToken}`,
+      }
+    }
+  }
 
   // Build request
   const request = {
