@@ -7,8 +7,11 @@
         <div class="hero-body">
           <p class="title">{{ community.name }}</p>
           <p class="subtitle">{{ community.members.length }} members</p>
-          <button class="button is-success is-pulled-right is-medium" @click="startDiscussion = true">
+          <button v-if="isMember" class="button is-success is-pulled-right is-medium" @click="startDiscussion = true">
             <i class="far fa-comments"></i>&nbsp; Start New Discussion
+          </button>
+          <button v-if="!isMember" class="button is-success is-pulled-right is-medium" @click="join">
+            <i class="fas fa-user-plus"></i>&nbsp; Join Community
           </button>
         </div>
       </section>
@@ -77,6 +80,7 @@
 
 <script>
 import apiMixin from '../mixins/apiMixin.js'
+import auth from '../services/auth.js'
 
 export default {
   // Adds functions to call the API
@@ -87,6 +91,9 @@ export default {
       community: null,
       discussions: null,
       error: null,
+      isMember: false,
+
+      // Used by new discussion dialog, this should probably be in it's own component
       startDiscussion: false,
       newDiscussionTitle: '',
       newDiscussionBody: '',
@@ -95,6 +102,7 @@ export default {
   },
 
   mounted() {
+    console.log(auth.user())
     this.getCommunity()
     // Update discussions every 5 seconds
     setInterval(this.fetchDiscussions, 5000)
@@ -104,6 +112,7 @@ export default {
     getCommunity: async function () {
       try {
         this.community = await this.apiGetCommunity(this.$route.params.id)
+        this.isMember = this.community.members.includes(auth.user().username)
         this.fetchDiscussions()
       } catch (err) {
         this.error = err
@@ -127,6 +136,16 @@ export default {
         this.$nextTick(async function () {
           await this.fetchDiscussions()
         })
+      } catch (err) {
+        this.error = err
+      }
+    },
+
+    join: async function () {
+      try {
+        await this.apiJoinCommunity(this.community.id, auth.user().username)
+        this.isMember = true
+        this.community.members.push(auth.user().username)
       } catch (err) {
         this.error = err
       }

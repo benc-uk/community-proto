@@ -33,6 +33,24 @@ export default {
     apiGetAllMembers: function () {
       return apiCall('/users')
     },
+
+    apiJoinCommunity: function (communityId, userId) {
+      return apiCall(`/communities/${communityId}/join/${userId}`, 'put')
+    },
+
+    apiGetUser: function (userId) {
+      return apiCall(`/users/${userId}`)
+    },
+
+    apiAddUser: function (userId, name) {
+      console.log(`name ${name}`)
+      return apiCall(`/users`, 'post', {
+        id: userId,
+        name: name,
+        about: 'New member',
+        avatar: 'foo.png',
+      })
+    },
   },
 }
 
@@ -86,7 +104,7 @@ async function apiCall(apiPath, method = 'get', data = null) {
   }
 
   // Attempt to return response body as data object if JSON
-  if (resp.headers.get('Content-Type').includes('application/json')) {
+  if (resp.headers && resp.headers.get('Content-Type') && resp.headers.get('Content-Type').includes('application/json')) {
     return resp.json()
   } else {
     return resp.text()

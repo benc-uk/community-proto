@@ -35,12 +35,12 @@ namespace CommunityApi.Controlers
         [HttpPost]
         public async Task<ActionResult<User>> Create(User user)
         {
-            List<User> userList = await _cosmosDbService.GetUsersAsync("c.uid", user.uid);
-            if (userList.Count > 0)
+            // We ignore dupes and return OK, this simplifies using the API and registering new users
+            User existingUser = await _cosmosDbService.GetUserAsync(user.id);
+            if (existingUser != null)
             {
-                return Problem(title: $"User with uid '{user.uid}' already exists", statusCode: 400);
+                return user;
             }
-            user.id = Guid.NewGuid().ToString();
             user.communities = new string[0];
             await _cosmosDbService.AddUserAsync(user);
             return user;
@@ -50,7 +50,7 @@ namespace CommunityApi.Controlers
         public async Task<ActionResult<IEnumerable<User>>> GetAll()
         {
             // Query returns all users
-            List<User> userList = await _cosmosDbService.GetUsersAsync("c.id", "-");
+            List<User> userList = await _cosmosDbService.GetUsersAsync("c.id", "@");
             return userList;
         }
 

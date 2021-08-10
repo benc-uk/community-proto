@@ -8,15 +8,15 @@ namespace CommunityApi.Models
 {
     public class User
     {
-
         [JsonPropertyName("id")]
+        [Required]
         public string id { get; set; }
 
         [Required]
         public string name { get; set; }
 
-        [Required]
-        public string uid { get; set; }
+        // [Required]
+        // public string uid { get; set; }
 
         public string about { get; set; }
 

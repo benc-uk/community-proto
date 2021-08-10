@@ -7,10 +7,13 @@
 
 <script>
 import auth from '../services/auth'
+import apiMixin from '../mixins/apiMixin.js'
 
 export default {
   name: 'Login',
   emits: ['loginComplete'],
+  // Adds functions to call the API
+  mixins: [apiMixin],
 
   data: function () {
     return {
@@ -22,6 +25,10 @@ export default {
     async login() {
       try {
         await auth.login([`api://${process.env.VUE_APP_CLIENT_ID}/Communities.ReadWrite`])
+
+        // Register user, note it's safe to call this each time
+        await this.apiAddUser(auth.user().username, auth.user().name)
+
         this.$emit('loginComplete')
         this.$router.replace({ path: '/' })
       } catch (err) {

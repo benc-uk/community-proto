@@ -18,7 +18,7 @@
           <div class="media">
             <div class="media-content">
               <p class="title is-4">{{ community.name }}</p>
-              <p class="subtitle is-6">{{ community.members.length }} members</p>
+              <p class="subtitle is-6">{{ community.members.length }} members - {{ community.members.length }} discussions</p>
             </div>
           </div>
 

@@ -178,7 +178,7 @@ export default {
     try {
       // 1. Try to acquire token silently
       tokenResp = await msalApp.acquireTokenSilent(accessTokenRequest)
-      console.log('### MSAL acquireTokenSilent was successful')
+      //console.log('### MSAL acquireTokenSilent was successful')
     } catch (err) {
       // 2. Silent process might have failed so try via popup
       tokenResp = await msalApp.acquireTokenPopup(accessTokenRequest)
