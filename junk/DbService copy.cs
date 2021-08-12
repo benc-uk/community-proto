@@ -8,14 +8,12 @@ namespace CommunityApi.Services
     using System.Linq.Expressions;
     using System.Linq;
 
-    public class CosmosDbService : ICosmosDbService
+    public class Foo : IDbService
     {
-        private Container _userContainer;
-        private Container _commContainer;
-        private Container _discussionContainer;
+
         private readonly ILogger _logger;
 
-        public CosmosDbService(CosmosClient dbClient, string databaseName, string commContainerName, string userContainerName, string discussionContainerName, ILogger<ICosmosDbService> logger)
+        public Foo(ILogger<IDbService> logger)
         {
             this._logger = logger;
             this._commContainer = dbClient.GetContainer(databaseName, commContainerName);

@@ -1,27 +1,21 @@
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Text.Json.Serialization;
-
-// Due to bug in SDK https://github.com/Azure/azure-cosmos-dotnet-v3/issues/2533
-// JsonPropertyName is ignored! So we have to use lowercase property names
 
 namespace CommunityApi.Models
 {
     public class User
     {
-        [JsonPropertyName("id")]
         [Required]
-        public string id { get; set; }
+        [Key]
+        public string Id { get; set; }
 
         [Required]
-        public string name { get; set; }
+        public string Name { get; set; }
 
-        // [Required]
-        // public string uid { get; set; }
+        public string About { get; set; }
 
-        public string about { get; set; }
+        public string Avatar { get; set; }
 
-        public string avatar { get; set; }
-
-        public string[] communities { get; set; }
+        public List<Community> Communities { get; set; }
     }
 }

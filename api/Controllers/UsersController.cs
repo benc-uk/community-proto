@@ -4,7 +4,9 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using CommunityApi.Models;
-using CommunityApi.Services;
+using CommunityApi.Data;
+using Microsoft.EntityFrameworkCore;
+//using System.Linq;
 
 namespace CommunityApi.Controlers
 {
@@ -13,18 +15,18 @@ namespace CommunityApi.Controlers
     public class UsersController : ControllerBase
     {
         private readonly ILogger<UsersController> _logger;
-        private readonly ICosmosDbService _cosmosDbService;
+        private readonly CommunityDbContext _db;
 
-        public UsersController(ILogger<UsersController> logger, ICosmosDbService cosmosDbService)
+        public UsersController(ILogger<UsersController> logger, CommunityDbContext dbContext)
         {
             _logger = logger;
-            _cosmosDbService = cosmosDbService;
+            _db = dbContext;
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<User>> Get([FromRoute] string id)
         {
-            User user = await _cosmosDbService.GetUserAsync(id);
+            User user = await _db.Users.FindAsync(id);
             if (user == null)
             {
                 return NotFound();
@@ -35,40 +37,60 @@ namespace CommunityApi.Controlers
         [HttpPost]
         public async Task<ActionResult<User>> Create(User user)
         {
-            // We ignore dupes and return OK, this simplifies using the API and registering new users
-            User existingUser = await _cosmosDbService.GetUserAsync(user.id);
+            // Ignore duplicate email addresses, simplifies the frontend code
+            User existingUser = await _db.Users.FindAsync(user.Id);
             if (existingUser != null)
             {
-                return user;
+                return Ok();
             }
-            user.communities = new string[0];
-            await _cosmosDbService.AddUserAsync(user);
+            _db.Users.Add(user);
+            await _db.SaveChangesAsync();
             return user;
         }
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<User>>> GetAll()
         {
-            // Query returns all users
-            List<User> userList = await _cosmosDbService.GetUsersAsync("c.id", "@");
+            List<User> userList = await _db.Users.ToListAsync();
             return userList;
         }
 
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete([FromRoute] string id)
         {
-            var res = await _cosmosDbService.DeleteUserAsync(id);
-            return StatusCode((int)res);
+            User user = await _db.Users.FindAsync(id);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            _db.Users.Remove(user);
+            await _db.SaveChangesAsync();
+
+            return Ok();
         }
 
         [HttpPut("{id}")]
         public async Task<ActionResult<User>> Update([FromRoute] string id, [FromBody] User user)
         {
-            if (id != user.id)
+            if (id != user.Id)
             {
                 return Problem(title: "Id in request body must match id in URL", statusCode: 400);
             }
-            return await _cosmosDbService.UpdateUserAsync(id, user);
+
+            User existingUser = await _db.Users.FindAsync(id);
+            if (existingUser == null)
+            {
+                return NotFound();
+            }
+
+            existingUser.Name = user.Name;
+            existingUser.About = user.About;
+            existingUser.Avatar = user.Avatar;
+            _db.Update<User>(existingUser);
+            await _db.SaveChangesAsync();
+
+            return existingUser;
         }
     }
 }
