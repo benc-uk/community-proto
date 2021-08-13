@@ -17,14 +17,19 @@ Requires:
 
 - Dotnet 5.0 SDK
 - Node.js 14+
-- SQL Server instance (use Azure or run in [Docker](https://docs.microsoft.com/en-us/sql/linux/quickstart-install-connect-docker?view=sql-server-ver15&pivots=cs1-bash), figure it out yourself)
+- SQL Server instance (use Azure SQL or run in [Docker](https://docs.microsoft.com/en-us/sql/linux/quickstart-install-connect-docker?view=sql-server-ver15&pivots=cs1-bash))
 - Bash
 - Make
-- EF tools `dotnet tool install --global dotnet-ef`
+- Entity Framework CLI tools for Dotnet `dotnet tool install --global dotnet-ef`
 
 Copy `appsettings.Development.json.sample` to `appsettings.Development.json` and set the CommunityContext connection string.
 
-> Note the -j2 after make run is important
+The connection string when running SQL Server on Docker looks like:
+```bash
+"Server=tcp:127.0.0.1,1433;Initial Catalog=communityDb;User ID=SA;Password=__CHANGE_ME__;Encrypt=False;TrustServerCertificate=False;Connection Timeout=30;",
+```
+
+> !NOTE! The -j2 after make run is important to allow make to run the frontend and API processes side-by-side
 
 ```bash
 cd api
