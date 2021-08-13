@@ -5,9 +5,11 @@ export default function Layout({}) {
   return (
     <nav className="navbar is-info" role="navigation" aria-label="main navigation">
       <div className="navbar-brand">
-        <a className="navbar-item" href="/">
-          <Image src="/img/community.svg" width="66" height="66" /> &nbsp; Home
-        </a>
+        <Link href="/">
+          <a className="navbar-item">
+            <Image src="/img/community.svg" width="66" height="66" alt="Logo" /> &nbsp; Home
+          </a>
+        </Link>
 
         <a role="button" className="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
           <span aria-hidden="true"></span>

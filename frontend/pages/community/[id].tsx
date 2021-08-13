@@ -1,6 +1,7 @@
-import { getCommunity, isMember } from '../../lib/api'
+import { getCommunity, isMember, getDiscussions } from '../../lib/api'
+import DiscussionList from '../../components/discussions-list'
 
-export default function MyCommunities({ community, error, joined }: any) {
+export default function MyCommunities({ community, error, joined, discussions }: any) {
   const joinButton = joined ? null : (
     <button v-if="!isMember" className="button is-success is-pulled-right is-medium" onClick={() => {}}>
       <i className="fas fa-user-plus"></i>&nbsp; Join Community
@@ -28,6 +29,7 @@ export default function MyCommunities({ community, error, joined }: any) {
           {startDiscussion}
         </div>
       </section>
+      <DiscussionList discussions={discussions}></DiscussionList>
     </div>
   )
 }
@@ -36,17 +38,19 @@ export async function getServerSideProps(context: any) {
   let error = null
   let community = null
   let joined = false
+  let discussions = null
   const { id } = context.query
   const userId = 'demo@example.net'
 
   try {
     community = await getCommunity(id)
     joined = await isMember(id, userId)
+    discussions = await getDiscussions(id)
   } catch (e) {
     error = e.message
   }
 
   return {
-    props: { community, error, joined },
+    props: { community, error, joined, discussions },
   }
 }

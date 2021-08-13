@@ -7,7 +7,7 @@ import Layout from '../components/layout'
 
 export default function MyApp({ Component, pageProps }: AppProps) {
   return (
-    <Layout>
+    <>
       <Head>
         <title>Community Prototype</title>
         <meta name="viewport" content="initial-scale=1.0, width=device-width" />
@@ -17,9 +17,11 @@ export default function MyApp({ Component, pageProps }: AppProps) {
         />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
       </Head>
-      <section className="container">
-        <Component {...pageProps} />
-      </section>
-    </Layout>
+      <Layout>
+        <section className="container">
+          <Component {...pageProps} />
+        </section>
+      </Layout>
+    </>
   )
 }

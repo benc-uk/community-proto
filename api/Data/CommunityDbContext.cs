@@ -9,6 +9,12 @@ namespace CommunityApi.Data
         {
         }
 
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Community>()
+                .HasMany(c => c.Discussions);
+        }
+
         public DbSet<User> Users { get; set; }
         public DbSet<Discussion> Discussions { get; set; }
         public DbSet<Community> Communities { get; set; }

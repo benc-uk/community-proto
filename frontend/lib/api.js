@@ -67,4 +67,18 @@ const isMember = async (communityId, userId) => {
   }
 }
 
-export { getAllMembers, getMyCommunities, getNotJoinedCommunities, getCommunity, isMember }
+const getDiscussions = async (communityId) => {
+  const url = `${process.env.API_ENDPOINT || ''}/discussions/inCommunity/${communityId}`
+  let response = await fetch(url, {
+    method: 'GET',
+  })
+
+  if (response.ok) {
+    let respData = await response.json()
+    return respData
+  } else {
+    throw new Error(`API Error: ${url} ${response.statusText}`)
+  }
+}
+
+export { getAllMembers, getMyCommunities, getNotJoinedCommunities, getCommunity, isMember, getDiscussions }

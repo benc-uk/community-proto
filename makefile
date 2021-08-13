@@ -27,14 +27,21 @@ lint-fix: ## Lint & format, will try to fix errors and modify code
 	cd $(API_DIR); dotnet format
 	cd $(SPA_DIR); npm run lint-fix
 
-image: ## Build container image from Dockerfile
-	docker build --file ./build/Dockerfile \
+image-frontend: ## Build container image for frontend
+	docker build --file ./build/frontend.Dockerfile \
 	--build-arg BUILD_INFO="$(BUILD_INFO)" \
 	--build-arg VERSION="$(VERSION)" \
-	--tag $(IMAGE_PREFIX):$(IMAGE_TAG) . 
+	--tag $(IMAGE_PREFIX)-frontend:$(IMAGE_TAG) . 
+
+image-api: ## Build container image for API server
+	docker build --file ./build/api.Dockerfile \
+	--build-arg BUILD_INFO="$(BUILD_INFO)" \
+	--build-arg VERSION="$(VERSION)" \
+	--tag $(IMAGE_PREFIX)-api:$(IMAGE_TAG) . 
 
 push: ## Push container image to registry
-	docker push $(IMAGE_PREFIX):$(IMAGE_TAG)
+	docker push $(IMAGE_PREFIX)-api:$(IMAGE_TAG)
+	docker push $(IMAGE_PREFIX)-frontend:$(IMAGE_TAG)
 
 build: ## Run a local build without a container
 	cd $(SPA_DIR); npm run build -- --dest ../api/wwwroot
@@ -46,4 +53,4 @@ run-api: ## Run with hotreload the API, used for local development
 	cd $(API_DIR); ASPNETCORE_ENVIRONMENT=Development dotnet watch run
 
 run-frontend: ## Run with hotreload the frontend server, used for local development
-	cd $(SPA_DIR); npm run serve
+	cd $(SPA_DIR); npm run dev

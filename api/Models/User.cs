@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace CommunityApi.Models
 {
@@ -16,6 +17,7 @@ namespace CommunityApi.Models
 
         public string Avatar { get; set; }
 
+        [JsonIgnore]
         public List<Community> Communities { get; set; }
     }
 }
