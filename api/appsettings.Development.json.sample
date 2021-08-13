@@ -1,14 +1,5 @@
 {
-  "Logging": {
-    "LogLevel": {
-      "Default": "Information",
-      "Microsoft": "Warning",
-      "Microsoft.Hosting.Lifetime": "Information"
-    }
-  },
-  "AllowedHosts": "*",
-  "CosmosDb": {
-    "Account": "https://__CHANGE_ME__.documents.azure.com:443/",
-    "Key": "__CHANGE_ME__"
+  "ConnectionStrings": {
+    "CommunityContext": "__CHANGE_ME__"
   }
 }
