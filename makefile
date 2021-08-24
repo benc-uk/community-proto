@@ -23,28 +23,24 @@ lint: ## Lint & format, will not fix but sets exit code on error
 	cd $(API_DIR); dotnet format --check
 	cd $(SPA_DIR); npm run lint
 
-lint-fix: ## Lint & format, will try to fix errors and modify code
-	cd $(API_DIR); dotnet format
-	cd $(SPA_DIR); npm run lint-fix
-
 image-frontend: ## Build container image for frontend
 	docker build --file ./build/frontend.Dockerfile \
 	--build-arg BUILD_INFO="$(BUILD_INFO)" \
 	--build-arg VERSION="$(VERSION)" \
-	--tag $(IMAGE_PREFIX)-frontend:$(IMAGE_TAG) . 
+	--tag $(IMAGE_PREFIX)/frontend:$(IMAGE_TAG) . 
 
 image-api: ## Build container image for API server
 	docker build --file ./build/api.Dockerfile \
 	--build-arg BUILD_INFO="$(BUILD_INFO)" \
 	--build-arg VERSION="$(VERSION)" \
-	--tag $(IMAGE_PREFIX)-api:$(IMAGE_TAG) . 
+	--tag $(IMAGE_PREFIX)/api:$(IMAGE_TAG) . 
 
 push: ## Push container image to registry
-	docker push $(IMAGE_PREFIX)-api:$(IMAGE_TAG)
-	docker push $(IMAGE_PREFIX)-frontend:$(IMAGE_TAG)
+	docker push $(IMAGE_PREFIX)/api:$(IMAGE_TAG)
+	docker push $(IMAGE_PREFIX)/frontend:$(IMAGE_TAG)
 
 build: ## Run a local build without a container
-	cd $(SPA_DIR); npm run build -- --dest ../api/wwwroot
+	cd $(SPA_DIR); npm run build
 	cd $(API_DIR); dotnet publish --configuration Release
 
 run:  run-api run-frontend ## Run both API and frontend server locally, *MUST* -j2 to the make command
